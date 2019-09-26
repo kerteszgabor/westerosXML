@@ -38,7 +38,7 @@ namespace westeros_sajat
                     Att = new Attacker()
                     {
                         King = xe.Element("attacker")?.Element("king")?.Value,
-                        Commanders = xe.Element("attacker")?.Element("commanders")?.Elements("commander").ToList(), 
+                        Commanders = xe.Element("attacker")?.Element("commanders")?.Elements("commander").ToList(),
                         Houses = xe.Element("attacker")?.Descendants("house")?.ToList(),
                         Size = xe.Element("attacker").Descendants("size").Any() ? int.Parse(xe.Element("attacker").Element("size").Value) : (int?)null,
                     },
@@ -51,26 +51,18 @@ namespace westeros_sajat
                     }
                 });
             }
-            ;
 
 
-
-            //egyes
-            var q1_seged= new List<string>();
-            foreach (Battle item in csatak)
-            {
-                foreach (string i in item.Att.HousesInString)
-                {
-                    q1_seged.Add(i);
-                }
-                foreach (string i in item.Def.HousesInString)
-                {
-                    q1_seged.Add(i);
-                }
-            }
-                ;
-
-            var q1 = q1_seged.Distinct().Count();
+            var q1 = (from y in csatak
+                      let attackingHouses =
+                         (from x in csatak
+                          group x by x.Att.HousesInString into g
+                          select g.Key).SelectMany(t => t)
+                      let defendingHouses =
+                         (from z in csatak
+                          group z by z.Def.HousesInString into g
+                          select g.Key).SelectMany(t => t)
+                      select attackingHouses.Concat(defendingHouses)).SelectMany(t => t).Distinct().Count();
 
             var q2 = from x in csatak
                      where x.Type is "ambush"
@@ -89,7 +81,7 @@ namespace westeros_sajat
             var q5 = from x in csatak
                      let attackerCount = x.Att.Houses.Count
                      let defenderCount = x.Def.Houses.Count
-                     let housesInBattleCounter = attackerCount + defenderCount   
+                     let housesInBattleCounter = attackerCount + defenderCount
                      where housesInBattleCounter > 2
                      select x;
 
@@ -105,30 +97,59 @@ namespace westeros_sajat
                       select regionsCounted.OrderByDescending(t => t.RegionCount).Take(3)).First();
 
             var q7 = (from x in csatak
-                     let regionsCounted =
-                        from y in csatak
-                        group y by y.Region into g
-                        select new
-                        {
-                            RegionName = g.Key,
-                            RegionCount = g.Count()
-                        }
-                     select regionsCounted.OrderByDescending(t => t.RegionCount).First()).First();
+                      let regionsCounted =
+                         from y in csatak
+                         group y by y.Region into g
+                         select new
+                         {
+                             RegionName = g.Key,
+                             RegionCount = g.Count()
+                         }
+                      select regionsCounted.OrderByDescending(t => t.RegionCount).First()).First();
 
-           // var q8 = q5.Join(q6,(t => t.Region),(t => t.RegionName), )
-            //         where q6.Union(x. 
-            //         ; 
+            var q8 = from x in q5
+                     from y in q6
+                     where x.Region == y.RegionName
+                     select x
+                     ;
 
-            //var q8 = from x in csatak
-            //         let housesWins =
-            //            from y in csatak
+            var q9 = (from x in csatak                   // a második allekérdezés nem lenne szükséges, tehát meg lehetne írni az egészet
+                      let battleWinners =               //egy queryn belül, de sajnos olyan szerkezetem (lista=>class=>lista), hogy
+                          (from p in csatak             //a SelectMany() miatt muszáj ilyen result segédekkel dolgozni. Biztos van optimálisabb megoldás, de működik. Same goes for q11
+                           select p.Outcome == "attacker" ? p.Att.HousesInString : p.Def.HousesInString).SelectMany(t => t)
+                      let results =
+                      from y in battleWinners
+                      group y by y into g
+                      select new
+                      {
+                          House = g.Key,
+                          NumberOfWins = g.Count()
+                      }
+                      select results).First();
 
 
+            var q10 = from x in csatak
+                      let legnagyobbSereg =
+                        (from y in csatak
+                         select (!y.Att.Size.HasValue && !y.Def.Size.HasValue ? null :
+                         (y.Att.Size.HasValue && !y.Def.Size.HasValue ? y.Att.Size :
+                         (!y.Att.Size.HasValue && y.Def.Size.HasValue ? y.Def.Size :
+                         (y.Att.Size <= y.Def.Size ? y.Def.Size : y.Att.Size))))).OrderByDescending(t => t).First()
+                      where x.Att.Size.Equals(legnagyobbSereg) || x.Def.Size.Equals(legnagyobbSereg)
+                      select new { NameOfTheBattle = x.Name, SizeOfTheArmy = legnagyobbSereg };
 
-            ;
+            var q11 = (from x in csatak
+                       let attackingCommanders =
+                         (from y in csatak
+                          group y by y.Att.CommandersInString into g
+                          select g.Key).SelectMany(t => t)
+                       let results =
+                         (from z in attackingCommanders
+                          group z by z into g
+                          select new { CommanderName = g.Key, NumberOfAttacks = g.Count() })
+                       select results).First().OrderByDescending(t => t.NumberOfAttacks).Take(3);
 
-
-
+            ; //debug point :D 
         }
     }
 }

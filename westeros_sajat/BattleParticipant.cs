@@ -24,8 +24,8 @@ namespace westeros_sajat
         public List<string> CommandersInString { get => commandersInString; set => commandersInString = value; }
         public List<string> HousesInString { get => housesInString; set => housesInString = value; }
 
-        static void ConvertXElementToList(List<XElement> fieldToConvert, List<string> fieldToConvertTo)         
-        {
+        static void ConvertXElementToList(List<XElement> fieldToConvert, List<string> fieldToConvertTo)         //stringgé alakítom az XElement.Value-kat 
+        {                                                                                                      //paraméterezhető, tehát újrafelhasználható kód
             if (fieldToConvert != null)
             {
                 foreach (XElement item in fieldToConvert)
