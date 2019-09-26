@@ -56,12 +56,21 @@ namespace westeros_sajat
 
 
             //egyes
-            var q1 = (from x in csatak
-                      let y = x.Att.HousesInString
-                      let z = x.Def.HousesInString
-                      
-                      select z);
-                      
+            var q1_seged= new List<string>();
+            foreach (Battle item in csatak)
+            {
+                foreach (string i in item.Att.HousesInString)
+                {
+                    q1_seged.Add(i);
+                }
+                foreach (string i in item.Def.HousesInString)
+                {
+                    q1_seged.Add(i);
+                }
+            }
+                ;
+
+            var q1 = q1_seged.Distinct().Count();
 
             var q2 = from x in csatak
                      where x.Type is "ambush"
@@ -72,12 +81,49 @@ namespace westeros_sajat
                      x.Majorcapture != 0
                      select x;
 
-            //var q4 = (from x in csatak
-            //          where x.Outcome is "attacker" && x.Att.HousesInString is "Stark" ||
-            //          x.Outcome is "defender" && x.Def.HousesInString is "Stark"
-            //          select x).Count();
+            var q4 = (from x in csatak
+                      where x.Outcome is "attacker" && x.Att.HousesInString.Contains("Stark") ||
+                      x.Outcome is "defender" && x.Def.HousesInString.Contains("Stark")
+                      select x).Count();
 
-            // var q5 = from x in csatak
+            var q5 = from x in csatak
+                     let attackerCount = x.Att.Houses.Count
+                     let defenderCount = x.Def.Houses.Count
+                     let housesInBattleCounter = attackerCount + defenderCount   
+                     where housesInBattleCounter > 2
+                     select x;
+
+            var q6 = (from x in csatak
+                      let regionsCounted =
+                         from y in csatak
+                         group y by y.Region into g
+                         select new
+                         {
+                             RegionName = g.Key,
+                             RegionCount = g.Count()
+                         }
+                      select regionsCounted.OrderByDescending(t => t.RegionCount).Take(3)).First();
+
+            var q7 = (from x in csatak
+                     let regionsCounted =
+                        from y in csatak
+                        group y by y.Region into g
+                        select new
+                        {
+                            RegionName = g.Key,
+                            RegionCount = g.Count()
+                        }
+                     select regionsCounted.OrderByDescending(t => t.RegionCount).First()).First();
+
+           // var q8 = q5.Join(q6,(t => t.Region),(t => t.RegionName), )
+            //         where q6.Union(x. 
+            //         ; 
+
+            //var q8 = from x in csatak
+            //         let housesWins =
+            //            from y in csatak
+
+
 
             ;
 

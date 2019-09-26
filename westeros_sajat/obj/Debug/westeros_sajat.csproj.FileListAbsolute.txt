@@ -12,3 +12,10 @@ C:\Users\Kertész Gábor\source\repos\prog3\westeros_sajat\westeros_sajat\obj\De
 C:\Users\Kertész Gábor\source\repos\prog3\westeros_sajat\westeros_sajat\obj\Debug\westeros_sajat.csproj.CoreCompileInputs.cache
 C:\Users\Kertész Gábor\source\repos\prog3\westeros_sajat\westeros_sajat\obj\Debug\westeros_sajat.exe
 C:\Users\Kertész Gábor\source\repos\prog3\westeros_sajat\westeros_sajat\obj\Debug\westeros_sajat.pdb
+C:\Users\gabor\source\repos\prog3\westerosXML\westeros_sajat\bin\Debug\westeros_sajat.exe.config
+C:\Users\gabor\source\repos\prog3\westerosXML\westeros_sajat\bin\Debug\westeros_sajat.exe
+C:\Users\gabor\source\repos\prog3\westerosXML\westeros_sajat\bin\Debug\westeros_sajat.pdb
+C:\Users\gabor\source\repos\prog3\westerosXML\westeros_sajat\obj\Debug\westeros_sajat.csprojAssemblyReference.cache
+C:\Users\gabor\source\repos\prog3\westerosXML\westeros_sajat\obj\Debug\westeros_sajat.csproj.CoreCompileInputs.cache
+C:\Users\gabor\source\repos\prog3\westerosXML\westeros_sajat\obj\Debug\westeros_sajat.exe
+C:\Users\gabor\source\repos\prog3\westerosXML\westeros_sajat\obj\Debug\westeros_sajat.pdb
